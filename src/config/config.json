@@ -1,0 +1,125 @@
+{
+  "invite_link": "https://discord.com/api/oauth2/authorize?client_id=824052492119310379&permissions=2150942784&scope=bot%20applications.commands",
+  "guildId": "758544905822797864",
+  "sl_color": [
+    161,
+    202,
+    255
+  ],
+  "gc_color": [
+    101,
+    202,
+    255
+  ],
+  "penyimColLength": 20,
+  "penyimFileName": "Initial_and_Finals_Chart_for_Penyim_Converter.xlsx",
+  "useFeedback": true,
+  "gc_feedbackFile": "hed_dictionary_withUserFeedback.csv",
+  "gc_file": "hed_dictionary.csv",
+  "sl_feedbackFile": "stephen-li-withUserFeedback.json",
+  "sl_file": "stephen-li.json",
+  "slToGc": {
+    "55": "1",
+    "33": "2",
+    "22": "3",
+    "32": "4",
+    "21": "5"
+  },
+  "accents": {
+    "macron": {
+      "list": [
+        "Ā",
+        "Ē",
+        "Ī",
+        "Ō",
+        "Ū",
+        "ā",
+        "ē",
+        "ī",
+        "ō",
+        "ū",
+        "m̃",
+        "m̃",
+        "n̄",
+        "N̄"
+      ],
+      "toneNum": "55"
+    },
+    "diaeresis": {
+      "list": [
+        "Ä",
+        "Ë",
+        "Ï",
+        "Ö",
+        "Ü",
+        "ä",
+        "ë",
+        "ï",
+        "ö",
+        "ü",
+        "M̈",
+        "m̈",
+        "n̈",
+        "N̈"
+      ],
+      "toneNum": "33"
+    },
+    "tilde": {
+      "list": [
+        "Ã",
+        "Ẽ",
+        "Ĩ",
+        "Õ",
+        "Ũ",
+        "ã",
+        "ẽ",
+        "ĩ",
+        "õ",
+        "ũ",
+        "M̃",
+        "m̃",
+        "ñ",
+        "Ñ"
+      ],
+      "toneNum": "22"
+    },
+    "grave_accent": {
+      "list": [
+        "À",
+        "È",
+        "Ì",
+        "Ò",
+        "Ù",
+        "à",
+        "è",
+        "ì",
+        "ò",
+        "ù",
+        "M̀",
+        "m̀",
+        "ǹ",
+        "Ǹ"
+      ],
+      "toneNum": "32"
+    },
+    "circumflex": {
+      "list": [
+        "Â",
+        "Ê",
+        "Î",
+        "Ô",
+        "Û",
+        "â",
+        "ê",
+        "î",
+        "ô",
+        "û",
+        "M̂",
+        "m̂",
+        "n̂",
+        "N̂"
+      ],
+      "toneNum": "21"
+    }
+  }
+}

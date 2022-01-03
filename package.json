@@ -1,0 +1,29 @@
+{
+  "dependencies": {
+    "@discordjs/builders": "^0.9.0",
+    "@discordjs/rest": "^0.2.0-canary.0",
+    "danfojs-node": "^0.3.4",
+    "discord-api-types": "^0.25.2",
+    "discord.js": "^13.3.1",
+    "dotenv": "^10.0.0",
+    "exceljs": "^4.3.0",
+    "loadash": "^1.0.0",
+    "mysql2": "^2.3.3"
+  },
+  "name": "sze-yap-bot",
+  "version": "1.0.0",
+  "description": "A discord bot",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "node testing/test.js",
+    "dev": "nodemon ./src/index.js",
+    "start": "node ./src/index.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "csv-parser": "^3.0.0",
+    "json2csv": "^5.0.6"
+  }
+}
