@@ -11,6 +11,14 @@
     202,
     255
   ],
+  "codeRomanMap": {
+    "HSR": "Hoisan Sauce",
+    "SL": "Stephen Li",
+    "GC": "Gene Chin",
+    "DJ": "Deng Jun",
+    "JW": "Jade Wu"
+  },
+  "defaultRomanType": "HSR",
   "penyimColLength": 20,
   "penyimFileName": "Initial_and_Finals_Chart_for_Penyim_Converter.xlsx",
   "useFeedback": true,
@@ -120,6 +128,25 @@
         "N̂"
       ],
       "toneNum": "21"
+    },
+    "caron": {
+      "list": [
+        "Ǎ",
+        "Ě",
+        "Ǐ",
+        "Ǒ",
+        "Ǔ",
+        "ǎ",
+        "ě",
+        "ǐ",
+        "ǒ",
+        "ǔ",
+        "M̌",
+        "m̌",
+        "Ň",
+        "ň"
+      ],
+      "toneNum": "33"
     }
   }
 }

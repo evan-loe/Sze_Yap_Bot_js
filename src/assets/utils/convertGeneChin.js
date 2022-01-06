@@ -9,7 +9,7 @@ const start = performance.now();
 fs.createReadStream(path.join(__dirname, "/../hed_dictionary.csv"))
   .pipe(csv())
   .on("data", (row) => {
-    row.cachedSearch = "";
+    row.cachedSearch = "[]";
     row.totalFreq = 50;
     entries.push(row);
   })

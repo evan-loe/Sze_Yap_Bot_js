@@ -7,6 +7,7 @@ class PenyimTable {
   }
 
   import(worksheet, colNum) {
+    // worksheet is 1 indexed (not zero indexed)
     for (let c = 2; c < colNum; c++) {
       const col = [];
       worksheet.getColumn(c).eachCell({ includeEmpty: true }, (cell) => {
@@ -19,6 +20,7 @@ class PenyimTable {
 
   get(row, col) {
     if (row === undefined || col === undefined) return undefined;
+    // col-1 because suffix array has 46 elements where the first is ""
     return this.data[row][col];
   }
 }

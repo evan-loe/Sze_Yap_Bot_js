@@ -8,3 +8,9 @@ CREATE TABLE Guilds
   welcomeMessage BOOLEAN NOT NULL DEFAULT false
 );
 
+CREATE TABLE Users
+(
+  userId VARCHAR(100) NOT NULL PRIMARY KEY,
+  favRomanType VARCHAR(10)
+);
+

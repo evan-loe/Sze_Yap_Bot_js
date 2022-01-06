@@ -3,11 +3,10 @@ class PaginationEmbed {
   length;
   current;
 
-  constructor(embedList = [], dictType = "sl") {
+  constructor(embedList = []) {
     this.embedList = embedList;
     this.length = embedList.length;
     this.current = 0;
-    this.selDictType = dictType;
   }
 
   addPages(embed) {
@@ -33,7 +32,7 @@ class PaginationEmbed {
   }
 
   prevPage() {
-    if (this.current - 1 > 0) {
+    if (this.current > 0) {
       this.current -= 1;
     } else {
       this.current = this.length - 1;
@@ -41,8 +40,8 @@ class PaginationEmbed {
     return this.embedList[this.current];
   }
 
-  render() {
-    return this.embedList[0];
+  render(startIdx = 0) {
+    return this.embedList[startIdx];
   }
 
   addFooters() {
@@ -52,12 +51,11 @@ class PaginationEmbed {
     return this;
   }
 
-  update(searchQuery) {
-    const paginate = searchQuery.resultToEmbed();
+  update(searchQuery, selDictType) {
+    const paginate = searchQuery.resultToEmbed(selDictType);
     this.embedList = paginate.embedList;
     this.current = paginate.current;
     this.length = paginate.length;
-    this.selDictType = paginate.selDictType;
     return paginate.embedList[this.current];
   }
 }

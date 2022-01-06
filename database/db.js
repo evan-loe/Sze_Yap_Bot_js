@@ -1,6 +1,5 @@
 const mysql = require("mysql2/promise");
 const result = require("dotenv").config({ path: __dirname + "/../src/.env" });
-console.log(result);
 
 module.exports = mysql.createConnection({
   host: process.env.DB_HOST,

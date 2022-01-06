@@ -42,8 +42,10 @@ module.exports = {
                 await StateManager.connection.query(
                   `INSERT INTO Guilds VALUES('${guild.id}', '${guild.ownerId}', '+', '0')`
                 );
+                StateManager.guildPrefixCache.set(guild.id, "+");
+              } else {
+                StateManager.guildPrefixCache.set(guild.id, result[0][0].cmdPrefix);
               }
-              StateManager.guildPrefixCache.set(guild.id, result[0][0].cmdPrefix);
               console.log(StateManager.guildPrefixCache);
             });
         });

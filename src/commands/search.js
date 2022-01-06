@@ -1,10 +1,12 @@
 const { SlashCommandBuilder } = require("@discordjs/builders");
-const { MessageActionRow, MessageButton, MessageSelectMenu } = require("discord.js");
+const buttons = require("../components/buttons");
+const { MessageActionRow } = require("discord.js");
 
 const searchQuery = require("../search/searchQuery");
 const { textToSlash, commandTypes } = require("../utils/textToSlash");
 
 const interactionCollector = require("../embeds/interactionCollector");
+const StateManager = require("../utils/StateManager");
 
 module.exports = {
   //TODO: change description!
@@ -18,64 +20,86 @@ module.exports = {
   async execute({ type, args, message }) {
     const interaction = type == commandTypes.TEXT ? textToSlash(message) : message;
     const phrase = type == commandTypes.TEXT ? args[0] : interaction.options.getString("phrase");
-    console.log(phrase);
     if (!phrase || !phrase.trim()) {
       interaction.reply({ content: "Please provide a phrase or word to search!", ephemeral: true });
       return;
     }
-    const q = new searchQuery(phrase);
-    await q.searchStephenLi();
-
-    let row1 = [
-      new MessageButton()
-        .setCustomId("switchDict")
-        .setLabel(`Switch to ${q.selDictType == "sl" ? "Gene Chin" : "Stephen Li"}'s dictionary`)
-        .setStyle("PRIMARY"),
-    ];
-    if (q.foundResult) {
-      row1.push(
-        new MessageButton().setCustomId("prev").setLabel("Previous").setStyle("DANGER"),
-        new MessageButton().setCustomId("next").setLabel("Next").setStyle("SUCCESS")
-      );
+    if (!StateManager.userFavRomanCache.has(String(interaction.user.id))) {
+      await StateManager.connection
+        .query(`SELECT favRomanType FROM Users WHERE userId = '${interaction.user.id}'`)
+        .then(async (result) => {
+          if (!Array.isArray(result[0]) || !result[0].length) {
+            console.log("User not found, creating entry in db...");
+            await StateManager.connection.query(
+              `INSERT INTO Users VALUES('${interaction.user.id}', NULL)`
+            );
+            StateManager.userFavRomanCache.set(interaction.user.id, null);
+          } else {
+            StateManager.userFavRomanCache.set(interaction.user.id, result[0][0].favRomanType);
+          }
+        });
+      // connect to db, create new user, and update cache
     }
 
-    let paginate = q.resultToEmbed();
+    const userFav = StateManager.userFavRomanCache.get(String(interaction.user.id));
 
-    const row = [
-      new MessageActionRow().addComponents(row1),
-      new MessageActionRow().addComponents([
-        new MessageSelectMenu()
-          .setCustomId("feedback")
-          .setPlaceholder("How relevant was this result?")
-          .setMaxValues(1)
-          .setOptions([
-            { label: "not relevant at all", value: "1" },
-            { label: "kind of relvant", value: "2" },
-            { label: "relevant", value: "3" },
-            { label: "really relevant", value: "4" },
-            { label: "exactly what I was looking for", value: "5" },
-          ]),
-      ]),
-    ];
+    const q = new searchQuery(phrase);
+    await q.searchStephenLi(userFav);
+
+    let paginate = q.resultToEmbed("SL");
+    paginate.slFound = q.foundResult;
+
     const sentMsg = await interaction.reply({
       embeds: [paginate.render()],
-      components: row,
+      components: [
+        new MessageActionRow().addComponents([
+          ...(paginate.slFound ? [buttons.prev, buttons.next, buttons.up, buttons.down] : []),
+          buttons.mic,
+        ]),
+        new MessageActionRow().addComponents([buttons.switchDictionary(paginate.selDictType)]),
+        new MessageActionRow().addComponents([buttons.relevanceDropdown]),
+        new MessageActionRow().addComponents([
+          // TODO: add the user fav type
+          buttons.hsr(q.userFavType),
+          buttons.sl(q.userFavType),
+          buttons.gc(q.userFavType),
+          buttons.dj(q.userFavType),
+          buttons.jw(q.userFavType),
+        ]),
+        ...(userFav === null
+          ? [new MessageActionRow().addComponents([buttons.favRomanDropdown])]
+          : []),
+      ],
       fetchReply: true,
     });
 
-    interactionCollector.buttonCollector({
-      buttonIds: ["next", "prev"],
+    interactionCollector.navigationButton({
+      buttonIds: ["next", "prev", "up", "down"],
       paginate: paginate,
       sentMsg: sentMsg,
     });
 
-    interactionCollector.menuCollector({
+    interactionCollector.selectRelevance({
       menuId: ["feedback"],
       sentMsg: sentMsg,
+      paginate: paginate,
+      searchQuery: q,
     });
 
     interactionCollector.switchDict({
       buttonIds: ["switchDict"],
+      sentMsg: sentMsg,
+      paginate: paginate,
+      searchQuery: q,
+    });
+
+    interactionCollector.defaultRomanization({
+      menuId: ["favRoman"],
+      sentMsg: sentMsg,
+    });
+
+    interactionCollector.switchPenyim({
+      buttonIds: ["HSR", "SL", "GC", "DJ", "JW"],
       sentMsg: sentMsg,
       paginate: paginate,
       searchQuery: q,

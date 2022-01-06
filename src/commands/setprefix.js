@@ -1,6 +1,5 @@
 const { SlashCommandBuilder } = require("@discordjs/builders");
 const StateManager = require("../utils/StateManager");
-const { Interaction } = require("discord.js");
 const { textToSlash, commandTypes } = require("../utils/textToSlash");
 
 module.exports = {
@@ -26,6 +25,7 @@ module.exports = {
         newPrefix = args[0];
       } else {
         interaction.reply("Please provide valid arguments. Use `/help` for details.");
+        return;
       }
     } else {
       newPrefix = interaction.options.getString("prefix");
@@ -44,7 +44,7 @@ module.exports = {
     }
     try {
       await StateManager.connection.query(
-        `UPDATE guilds SET cmdPrefix = '${newPrefix}' WHERE guildId = '${interaction.guildId}'`
+        `UPDATE Guilds SET cmdPrefix = '${newPrefix}' WHERE guildId = '${interaction.guildId}'`
       );
       interaction.reply(`Updated guild prefix to ${newPrefix}`);
       StateManager.emit("prefixUpdate", interaction.guildId, newPrefix);

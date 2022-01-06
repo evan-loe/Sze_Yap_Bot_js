@@ -10,13 +10,11 @@ const PenyimSpreadsheet = require("../penyim/PenyimSpreadsheet");
 class StateManager extends EventEmitter {
   constructor(options) {
     super(options);
-    this.sl = require(`../assets/${
-      config.useFeedback ? config.sl_feedbackFile : config.sl_feedbackFile
-    }`);
+    this.sl = require(`../assets/${config.useFeedback ? config.sl_feedbackFile : config.sl_file}`);
     this.gc = null;
     this.commands = new Collection();
     this.guildPrefixCache = new Map();
-    this.userPrefixCache = new Map();
+    this.userFavRomanCache = new Map();
     this.penyimSheet = new PenyimSpreadsheet();
   }
 
