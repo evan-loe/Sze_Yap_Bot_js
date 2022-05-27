@@ -5,8 +5,11 @@ module.exports = {
   async execute(guild) {
     try {
       console.log("Joined the guild: ", guild.name);
-      await StateManager.connection.query(
-        `INSERT INTO Guilds VALUES('${guild.id}', '${guild.ownerId}', '+', '0')`
+      await StateManager.run(
+        `INSERT INTO Guilds VALUES($guildId, $ownerId, '+', '0')`, {
+          $guildId: guild.id,
+          $ownerId: guild.ownerId
+        }
       );
       StateManager.emit("guildJoin", guild.id, "+");
     } catch (err) {

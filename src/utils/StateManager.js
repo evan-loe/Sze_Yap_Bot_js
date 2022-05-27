@@ -1,6 +1,7 @@
 const { EventEmitter } = require("events");
 
-const connection = require("../../database/db");
+// const connection = require("../../database/db");
+const sqlite3 = require('sqlite3').verbose();
 const gc = require("../search/importDictionary");
 const config = require("../config/config.json");
 const { Collection } = require("discord.js");
@@ -20,7 +21,7 @@ class StateManager extends EventEmitter {
 
   async initialize() {
     try {
-      this.connection = await connection;
+      this.db = new sqlite3.Database('database/database.db');
       this.gc = await gc;
       await this.penyimSheet.initialize();
     } catch (error) {

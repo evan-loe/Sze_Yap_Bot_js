@@ -25,19 +25,35 @@ module.exports = {
       return;
     }
     if (!StateManager.userFavRomanCache.has(String(interaction.user.id))) {
-      await StateManager.connection
-        .query(`SELECT favRomanType FROM Users WHERE userId = '${interaction.user.id}'`)
-        .then(async (result) => {
-          if (!Array.isArray(result[0]) || !result[0].length) {
-            console.log("User not found, creating entry in db...");
-            await StateManager.connection.query(
-              `INSERT INTO Users VALUES('${interaction.user.id}', NULL)`
-            );
-            StateManager.userFavRomanCache.set(interaction.user.id, null);
-          } else {
-            StateManager.userFavRomanCache.set(interaction.user.id, result[0][0].favRomanType);
-          }
-        });
+      StateManager.db.get(
+        `SELECT favRomanType FROM Users WHERE userId = $userId`, {
+          $userId: interaction.user.id,}, 
+          (err, row) => {
+            if (err) {
+              console.log(err)
+            }
+            else if (row == undefined) {
+              console.log("undefined")
+            }
+            else {
+              console.log(row)
+            }
+            if (err) {
+              console.log(err);
+            } else if (row == undefined) {
+              console.log("Didn't find user record, creating one now...");
+              StateManager.db.run(`INSERT INTO Users VALUES($userId, NULL)`, {
+                $userId: interaction.user.id,
+              });
+              StateManager.userFavRomanCache.set(interaction.user.id, null);
+            } else {
+              console.log("Setting cache");
+              console.log(row);
+              console.log(row["favRomanType"]);
+              StateManager.userFavRomanCache.set(interaction.user.id, row["favRomanType"]);
+            }
+          });
+        
       // connect to db, create new user, and update cache
     }
 

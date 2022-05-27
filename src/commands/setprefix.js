@@ -43,8 +43,11 @@ module.exports = {
       return;
     }
     try {
-      await StateManager.connection.query(
-        `UPDATE Guilds SET cmdPrefix = '${newPrefix}' WHERE guildId = '${interaction.guildId}'`
+      await StateManager.db.run(
+        `UPDATE Guilds SET cmdPrefix = $newPrefix WHERE guildId = $guildId`, {
+          $newPrefix: newPrefix,
+          $guildId: interaction.guildId
+        }
       );
       interaction.reply(`Updated guild prefix to ${newPrefix}`);
       StateManager.emit("prefixUpdate", interaction.guildId, newPrefix);

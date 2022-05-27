@@ -2,13 +2,15 @@
   "dependencies": {
     "@discordjs/builders": "^0.9.0",
     "@discordjs/rest": "^0.2.0-canary.0",
+    "canvas": "^2.9.1",
     "danfojs-node": "^0.3.4",
     "discord-api-types": "^0.25.2",
     "discord.js": "^13.3.1",
     "dotenv": "^10.0.0",
     "exceljs": "^4.3.0",
     "loadash": "^1.0.0",
-    "mysql2": "^2.3.3"
+    "mysql2": "^2.3.3",
+    "sqlite3": "^5.0.8"
   },
   "name": "sze-yap-bot",
   "version": "1.0.0",

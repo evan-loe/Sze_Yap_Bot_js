@@ -34,20 +34,28 @@ module.exports = {
         await StateManager.initialize();
         require("./addListeners");
         client.guilds.cache.forEach(async (guild) => {
-          await StateManager.connection
-            .query(`SELECT cmdPrefix FROM Guilds WHERE guildId = '${guild.id}'`)
-            .then(async (result) => {
-              if (!Array.isArray(result[0]) || !result[0].length) {
-                console.log("Guild not found, creating entry in db...");
-                await StateManager.connection.query(
-                  `INSERT INTO Guilds VALUES('${guild.id}', '${guild.ownerId}', '+', '0')`
-                );
-                StateManager.guildPrefixCache.set(guild.id, "+");
-              } else {
-                StateManager.guildPrefixCache.set(guild.id, result[0][0].cmdPrefix);
-              }
+          StateManager.db.get(`SELECT cmdPrefix FROM Guilds WHERE guildId = $guildId`, {
+            $guildId: guild.id
+          },
+          (err, row) => {
+            if (err) {
+              console.log(err);
+            } else if (row == undefined) {
+              console.log("Didn't find a guild record, creating one now...");
+              StateManager.db.run(
+                `INSERT INTO Guilds VALUES($guildId, $ownerId, '+', '0')`, {
+                  $guildId: guild.id,
+                  $ownerId: guild.ownerId,
+                });
+              StateManager.guildPrefixCache.set(guild.id, "+");
+            } else {
+              StateManager.guildPrefixCache.set(
+                guild.id,
+                row["cmdPrefix"]
+              );
               console.log(StateManager.guildPrefixCache);
-            });
+            }
+          })
         });
       } catch (error) {
         if (error) console.error(error);

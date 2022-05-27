@@ -16,8 +16,11 @@ StateManager.on("guildLeave", (guildId) => {
 });
 
 StateManager.on("romanizationUpdated", async (userId, favRomanType) => {
-  await StateManager.connection.query(
-    `INSERT INTO Users VALUES('${userId}', '${favRomanType}') ON DUPLICATE KEY UPDATE favRomanType = '${favRomanType}'`
+  await StateManager.db.run(
+    `INSERT INTO Users VALUES($userId, $favRomanType) ON DUPLICATE KEY UPDATE favRomanType = $favRomanType`, {
+      $userId: userId,
+      $favRomanType: favRomanType
+    }
   );
   StateManager.userFavRomanCache.set(userId, favRomanType);
   console.log("Updated Cache", StateManager.userFavRomanCache);
