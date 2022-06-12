@@ -120,6 +120,10 @@ module.exports = {
       paginate: paginate,
       searchQuery: q,
     });
+
+    interactionCollector.mic({
+      sentMsg: sentMsg,
+    })
   },
   parse(commandString) {
     return [commandString.trim()];

@@ -11,9 +11,9 @@ module.exports = {
   //TODO: change description!
   data: new SlashCommandBuilder()
     .setName("penyim")
-    .setDescription("Searches dictionary for word")
+    .setDescription("Converts Penyim")
     .addStringOption((option) =>
-      option.setName("phrase").setDescription("dasfsa").setRequired(true)
+      option.setName("phrase").setDescription("The phrase to convert").setRequired(true)
     )
     .setDefaultPermission(true),
   async execute({ type, args, message }) {

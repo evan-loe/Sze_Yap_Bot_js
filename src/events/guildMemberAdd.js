@@ -10,19 +10,72 @@ const canvasHeight = 600;
 /**
  * 
  * @param {string} imageBank 
- * @returns Promise
+ * @returns Image
  */
-function chooseRandomImage(imageBank) {
+async function chooseRandomImage(imageBank) {
   const files = fs.readdirSync(`./src/assets/welcome_images/${imageBank}/`);
-  return loadImage(files[Math.floor(Math.random*files.length)]);
+  console.log(
+    String(
+      `./src/assets/welcome_images/${imageBank}/${
+        files[Math.floor(Math.random() * files.length)]
+      }`
+    )
+  );
+  return loadImage(
+    String(`./src/assets/welcome_images/${imageBank}/${files[Math.floor(Math.random() * files.length)]}`)
+  );
 }
 
 /**
  * 
  * @param {GuildMember} member 
  */
-function getUserAvatar(member) {
-  return loadImage(`https://cdn.discordapp.com/guilds/${member.guild.id}/users/${member.user.id}/avatars/${member.avatar}.png`);
+async function getUserAvatar(member) {
+  return loadImage(member.displayAvatarURL({ format: 'png', size: 512 }));
+}
+
+async function cropPfp(radius, member) {
+  const canvas = createCanvas(radius * 2, radius * 2);
+  const ctx = canvas.getContext("2d");
+
+  ctx.drawImage(await getUserAvatar(member), 0, 0, 2*radius, 2*radius);
+
+  // only draw image where mask is
+  ctx.globalCompositeOperation = "destination-in";
+
+  // draw our circle mask
+  ctx.fillStyle = "#000";
+  ctx.beginPath();
+  ctx.arc(
+    radius,
+    radius,
+    radius, // radius
+    0, // start angle
+    2 * Math.PI // end angle
+  );
+  ctx.fill();
+
+  // restore to default composite operation (is draw over current image)
+  ctx.globalCompositeOperation = "source-over";
+
+  // add border
+  ctx.lineWidth = 5;
+  ctx.strokeStyle = "black";
+  ctx.stroke();
+
+  return canvas;
+}
+
+function outlineText({ctx, text, font, x, y, fill = "#fff8e3", outline = "#000", line = 2}) {
+  ctx.font = font;
+  ctx.fillStyle = fill;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'top';
+  ctx.lineWidth = line;
+
+  ctx.fillText(text, x, y);
+  ctx.fillStyle = outline;
+  ctx.strokeText(text, x, y );
 }
 
 /**
@@ -31,29 +84,62 @@ function getUserAvatar(member) {
  */
 async function sendWelcomeMessage(member) {
   const guildInfo = require('../assets/welcome.json');
-  console.log(guildInfo);
-  
   
   if (guildInfo.hasOwnProperty(member.guild.id)) {
-    const canvas = createCanvas(canvasWidth, canvasHeight);
+    const bgImage = await chooseRandomImage(guildInfo[member.guild.id].hoisan_pics ? "hoisan" : "reg");
+    const canvas = createCanvas(bgImage.width, bgImage.height);
     const ctx = canvas.getContext('2d');
-    const image = await chooseRandomImage(guildInfo[member.guild.id].hoisan_pics ? "hoisan" : "reg");
-    ctx.drawImage(image);
-    ctx.drawImage(getUserAvatar(member));
+    ctx.drawImage(bgImage, 0, 0);
+    const radius = bgImage.width / 8;
+    ctx.drawImage(await cropPfp(radius, member, bgImage), bgImage.width / 2 - radius, bgImage.height / 2 - 1.5*radius);
 
-    ctx.font = 'bold 70pt Tahoma';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'top'
-    ctx.fillText(guildInfo.get(member.guild.id).en_title, image.width/2, image.height/4);
-    ctx.fillText(guildInfo.get(member.guild.id).ch_title, image.width/2, image.height*3/4);
+    outlineText({
+      ctx: ctx,
+      text: guildInfo[member.guild.id].en_title,
+      font: 'bold 40pt Tahoma',
+      x: bgImage.width/2, 
+      y: bgImage.height/20
+    });
+    
+    outlineText({
+      ctx: ctx,
+      text: `You're member #${member.guild.memberCount}`,
+      font: 'bold 40pt Tahoma',
+      x: bgImage.width/2, 
+      y: bgImage.height*10/12
+    });
+    
+    outlineText({
+      ctx: ctx,
+      text: guildInfo[member.guild.id].ch_title,
+      font: 'bold 40pt Tahoma',
+      x: bgImage.width/2, 
+      y: bgImage.height*11/16
+    });
 
     const buffer = canvas.toBuffer('image/png')
-    fs.writeFileSync(`../temp/gen_welcome_images/${member.user.id}_${Date.now()}_welcome.png`, buffer);
-    console.log("lolll")
-    guild.systemChannel.send(guildInfo.get(guild.id).message);
+    const imagePath = `./src/temp/gen_welcome_images/${member.user.id}_${Date.now()}_welcome.png`
+    fs.writeFileSync(imagePath, buffer);
+    member.guild.systemChannel.send({
+      content: guildInfo[member.guild.id].message,
+      embeds: [
+        {
+          image: {
+            url: "attachment://file.png",
+          },
+        },
+      ],
+      files: [
+        {
+          attachment: imagePath,
+          name: "file.png",
+          description: `Welcome message for ${member.nickname}`,
+        },
+      ],
+    });
   } 
   else {
-    console.log("No welcome message");
+    console.log(`${member.nickname} joined the guild ${member.guild.name} which doesn't have a welcome message`);
   }
 }
 
@@ -64,14 +150,23 @@ module.exports = {
    * @param {GuildMember} member 
    */
   async execute(member) {
-    console.log(member);
     try {
-      console.log(member);
       sendWelcomeMessage(member);
+      
     } catch (err) {
-      console.log("ERROROOROR")
       console.log(err);
     }
+    
+    const data = require("../data/memberCount.json");
+    if (!(member.guild.id in data)) return;
+    data[member.guild.id].joinedSinceYesterday++;
+    fs.writeFile(
+      "./src/data/memberCount.json",
+      JSON.stringify(data),
+      (err) => {
+        err && console.log(err);
+      }
+    );
   },
 };
 

@@ -41,4 +41,53 @@ for (const file of eventFiles) {
   }
 }
 client.login(process.env.TOKEN);
+
+const countServerMembers = () => {
+  let data = require("./data/memberCount.json");
+  console.log("Counting members now");
+  client.guilds.cache.map((guild) => {
+    if (!(guild.id in data)) {
+      data[guild.id] = {
+        name: guild.name,
+        memberCount: [],
+        joinedSinceYesterday: 0,
+        leftSinceYesterday: 0
+      };
+    }
+    data[guild.id].memberCount.push({
+      datetime: Date.now(),
+      count: guild.memberCount,
+      joined: data[guild.id].joinedSinceYesterday,
+      left: data[guild.id].leftSinceYesterday,
+    });
+    data[guild.id].joinedSinceYesterday = 0;
+    data[guild.id].leftSinceYesterday = 0;
+  });
+  fs.writeFile("./src/data/memberCount.json", JSON.stringify(data), (err) => {
+    err && console.log(err);
+  });
+}
+
+const cleanTempFiles = () => {
+  try {
+    for (directory in ['./src/temp/memberCount', '.src/temp/gen_welcome_images']) {
+      fs.readdir(directory, (err, files) => {
+        if (err) throw err;
+        for (const file of files) {
+          fs.unlink(path.join(directory, file), err => {
+            if (err) throw err;
+          });
+        }
+      })
+    }
+  } catch (err) {
+    console.log(err)
+  }
+}
+
+const cron = require("node-cron");
+// scheduled server count at 5 am every morning
+cron.schedule("0 5 * * *", countServerMembers);
+cron.schedule("0 4 * * *", cleanTempFiles);
+
 module.exports = client;
