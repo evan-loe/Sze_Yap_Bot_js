@@ -90,4 +90,8 @@ const cron = require("node-cron");
 cron.schedule("0 5 * * *", countServerMembers);
 cron.schedule("0 4 * * *", cleanTempFiles);
 
+process.on('uncaughtException', function(err) {
+  console.log('Whoops exception: ' + err);
+});
+
 module.exports = client;

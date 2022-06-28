@@ -17,7 +17,7 @@ StateManager.on("guildLeave", (guildId) => {
 
 StateManager.on("romanizationUpdated", async (userId, favRomanType) => {
   await StateManager.db.run(
-    `INSERT INTO Users VALUES($userId, $favRomanType) ON DUPLICATE KEY UPDATE favRomanType = $favRomanType`, {
+    `INSERT INTO USERS (userId, favRomanType) VALUES($userId, $favRomanType) ON CONFLICT(userId) DO UPDATE SET favRomanType=EXCLUDED.favRomanType;`, {
       $userId: userId,
       $favRomanType: favRomanType
     }

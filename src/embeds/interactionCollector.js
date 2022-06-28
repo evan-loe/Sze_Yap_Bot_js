@@ -125,6 +125,7 @@ module.exports.defaultRomanization = ({ menuId, sentMsg }) => {
       sentMsg.components.pop();
     } catch (err) {
       console.log(err);
+      debugger
     }
 
     sentMsg.edit({ components: sentMsg.components }).catch((err) => {

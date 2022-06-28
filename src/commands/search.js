@@ -82,12 +82,13 @@ module.exports = {
           buttons.dj(q.userFavType),
           buttons.jw(q.userFavType),
         ]),
-        ...(userFav === null
-          ? [new MessageActionRow().addComponents([buttons.favRomanDropdown])]
-          : []),
+        ...(userFav
+          ? []
+          : [new MessageActionRow().addComponents([buttons.favRomanDropdown])]),
       ],
       fetchReply: true,
     });
+    console.log("User Fav ", userFav)
 
     interactionCollector.navigationButton({
       buttonIds: ["next", "prev", "up", "down"],
@@ -121,9 +122,9 @@ module.exports = {
       searchQuery: q,
     });
 
-    interactionCollector.mic({
-      sentMsg: sentMsg,
-    })
+    // interactionCollector.mic({
+    //   sentMsg: sentMsg,
+    // })
   },
   parse(commandString) {
     return [commandString.trim()];
