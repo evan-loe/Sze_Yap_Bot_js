@@ -2,6 +2,7 @@ const { EventEmitter } = require("events");
 
 // const connection = require("../../database/db");
 const sqlite3 = require('sqlite3').verbose();
+const { open } = require('sqlite')
 const gc = require("../search/importDictionary");
 const config = require("../config/config.json");
 const { Collection } = require("discord.js");
@@ -21,7 +22,10 @@ class StateManager extends EventEmitter {
 
   async initialize() {
     try {
-      this.db = new sqlite3.Database('database/database.db');
+      this.db = await open({
+        filename: 'database/database.db',
+        driver: sqlite3.Database
+      }),
       this.gc = await gc;
       await this.penyimSheet.initialize();
     } catch (error) {
