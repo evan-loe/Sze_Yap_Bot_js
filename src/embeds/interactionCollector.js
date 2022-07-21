@@ -145,6 +145,7 @@ module.exports.switchPenyim = ({ buttonIds, sentMsg, paginate, searchQuery }) =>
   const collector = sentMsg.createMessageComponentCollector({
     componentType: "BUTTON",
     filter: (interaction) => {
+      console.log(interaction)
       return buttonIds.includes(String(interaction.customId));
     },
     time: 1800 * 1000,
@@ -218,17 +219,17 @@ module.exports.penyimConvertCommand = ({ buttonIds, sentMsg, penyimArray }) => {
 };
 
 
-module.exports.switchPenyim = ({
-  buttonIds,
-  sentMsg,
-}) => {
-  const collector = sentMsg.createMessageComponentCollector({
-    componentType: "BUTTON",
-    filter: (interaction) => {
-      return buttonIds.includes(String(interaction.customId));
-    },
-    time: 1800 * 1000,
-  });
+// module.exports.switchPenyim = ({
+//   buttonIds,
+//   sentMsg,
+// }) => {
+//   const collector = sentMsg.createMessageComponentCollector({
+//     componentType: "BUTTON",
+//     filter: (interaction) => {
+//       return buttonIds.includes(String(interaction.customId));
+//     },
+//     time: 1800 * 1000,
+//   });
 
-  collector.on("collect", (i) => {});
-};
+//   collector.on("collect", (i) => {});
+// };

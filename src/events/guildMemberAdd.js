@@ -2,7 +2,7 @@ const StateManager = require("../utils/StateManager");
 const { GuildMember } = require('discord.js');
 const fs = require('fs');
 
-const { createCanvas, loadImage } = require('canvas');
+// const { createCanvas, loadImage } = require('canvas');
 
 const canvasWidth = 1200;
 const canvasHeight = 600;
@@ -151,7 +151,7 @@ module.exports = {
    */
   async execute(member) {
     try {
-      sendWelcomeMessage(member);
+      // sendWelcomeMessage(member);
       
     } catch (err) {
       console.log(err);

@@ -103,7 +103,7 @@ class searchQuery {
       case "CHINESE":
         if (this.found[0].length < 2) {
           result = dict.filter((entry, index) => {
-            this.parsedResult.slIndices.push(index);
+            this.parsedResult.sl.push(index);
             return entry.cantonese.match(this.found[0]) || entry.mandarin.match(this.found[0]);
           });
         }
