@@ -3,16 +3,12 @@
     "@discordjs/builders": "^0.9.0",
     "@discordjs/rest": "^0.2.0-canary.0",
     "csv-writer": "^1.6.0",
-    "danfojs-node": "^0.3.4",
     "discord-api-types": "^0.25.2",
     "discord.js": "^13.3.1",
     "dotenv": "^10.0.0",
     "exceljs": "^4.3.0",
     "loadash": "^1.0.0",
-    "mysql2": "^2.3.3",
-    "node-cron": "^3.0.0",
-    "sqlite": "^4.1.1",
-    "sqlite3": "^5.0.8"
+    "node-cron": "^3.0.0"
   },
   "name": "sze-yap-bot",
   "version": "1.0.0",
