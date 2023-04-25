@@ -7,6 +7,7 @@ class DatabaseTable {
   constructor(filename, db_type='json') {
     this.filename = filename
     this.db_type = db_type
+    this.defaults = {}
     this.columns = []
     this.data = {}
     this._load()
@@ -24,10 +25,12 @@ class DatabaseTable {
     const data = JSON.parse(fs.readFileSync(`${db_folder_path}/${this.filename}.json`, {encoding: 'utf-8'}))
     this.data = data["data"]
     this.columns = data["columns"]
+    this.defaults = data["defaults"]
   }
 
   insert(key, values) {
     this.clean_values(values)
+    this.fill_defaults(values)
     this.data[key] = this.columns.map((column) => values[column])
     this.commit()
   }
@@ -35,6 +38,7 @@ class DatabaseTable {
   batch_insert(keys_values) {
     keys_values.forEach(([key, values]) => {
       this.clean_values(values)
+      this.fill_defaults(values)
       this.data[key] = this.columns.map((column) => values[column])
     })
     this.commit()
@@ -67,6 +71,16 @@ class DatabaseTable {
     })
   }
 
+  select_n(n, { where, condition, satisfies }) {
+    const records = this.select({where, condition, satisfies})
+    if (records.length > 0) {
+      if (n == 1)
+        return records[0]
+      records.splice(0, records.length < n ? records.length : n)
+    }
+    return records
+  }
+
   clean_values(values) {
     Object
       .keys(values)
@@ -74,8 +88,17 @@ class DatabaseTable {
       .forEach(Reflect.deleteProperty.bind(null, values))
   }
 
+  fill_defaults(values) {
+    Object.entries(this.defaults).forEach(([key, value]) => {
+      if (key in values)
+        return;
+      values[key] = value
+    })
+  }
+
   commit() {
     fs.writeFileSync(`${db_folder_path}/${this.filename}.json`, JSON.stringify({
+      defaults: this.defaults,
       columns: this.columns,
       data: this.data
     }))

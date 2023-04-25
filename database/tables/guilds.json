@@ -1,6 +1,1 @@
-{
-  "columns": ["guild_owner_id", "cmd_prefix", "welcome_message"],
-  "data": {
-    "4567890233": ["139965429234", "+", "Hi!! Welcome to the server!"]
-  }
-}
+{"defaults":{"cmd_prefix":"+","welcome_message":"Hi there! Welcome to the server :)"},"columns":["guild_owner_id","cmd_prefix","welcome_message"],"data":{"4567890233":["139965429234","+","Hi!! Welcome to the server!"],"758544905822797864":["693267245610303518","+","Hi there! Welcome to the server :)"],"807332043447861279":["693267245610303518","+","Hi there! Welcome to the server :)"]}}

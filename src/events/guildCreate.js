@@ -5,6 +5,7 @@ module.exports = {
   async execute(guild) {
     try {
       console.log("Joined the guild: ", guild.name);
+      
       await StateManager.run(
         `INSERT INTO Guilds VALUES($guildId, $ownerId, '+', '0')`, {
           $guildId: guild.id,

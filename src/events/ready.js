@@ -32,32 +32,21 @@ module.exports = {
         }
 
         client.guilds.cache.forEach((guild) => {
-          
-        })
-
-        client.guilds.cache.forEach(async (guild) => {
-          StateManager.db.get(`SELECT cmdPrefix FROM Guilds WHERE guildId = $guildId`, {
-            $guildId: guild.id
-          },
-          (err, row) => {
-            if (err) {
-              console.log(err);
-            } else if (row == undefined) {
-              console.log("Didn't find a guild record, creating one now...");
-              StateManager.db.run(
-                `INSERT INTO Guilds VALUES($guildId, $ownerId, '+', '0')`, {
-                  $guildId: guild.id,
-                  $ownerId: guild.ownerId,
-                });
-              StateManager.guildPrefixCache.set(guild.id, "+");
-            } else {
-              StateManager.guildPrefixCache.set(
-                guild.id,
-                row["cmdPrefix"]
-              );
-              console.log(StateManager.guildPrefixCache);
-            }
+          const query = StateManager.db.guilds.select_n(1, {
+            where: "id",
+            condition: "equals",
+            satisfies: guild.id
           })
+
+          if (!query) {
+            StateManager.db.guilds.insert(guild.id, {
+              guild_owner_id: guild.ownerId,
+            })
+            StateManager.guildPrefixCache.set(guild.id, "+");
+          } else {
+            StateManager.guildPrefixCache.set(guild.id, query["cmd_prefix"])
+          }
+
         });
       } catch (error) {
         if (error) console.error(error);
