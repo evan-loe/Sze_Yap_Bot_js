@@ -31,8 +31,10 @@ module.exports = {
           console.log("Successfully registered commands locally.");
         }
 
-        await StateManager.initialize();
-        require("./addListeners");
+        client.guilds.cache.forEach((guild) => {
+          
+        })
+
         client.guilds.cache.forEach(async (guild) => {
           StateManager.db.get(`SELECT cmdPrefix FROM Guilds WHERE guildId = $guildId`, {
             $guildId: guild.id

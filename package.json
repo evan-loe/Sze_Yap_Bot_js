@@ -8,7 +8,8 @@
     "dotenv": "^10.0.0",
     "exceljs": "^4.3.0",
     "loadash": "^1.0.0",
-    "node-cron": "^3.0.0"
+    "node-cron": "^3.0.0",
+    "node-fetch": "^2.6.9"
   },
   "name": "sze-yap-bot",
   "version": "1.0.0",

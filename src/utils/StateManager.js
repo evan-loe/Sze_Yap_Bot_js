@@ -1,12 +1,12 @@
 const { EventEmitter } = require("events");
 
 // const connection = require("../../database/db");
-const sqlite3 = require('sqlite3').verbose();
-const { open } = require('sqlite')
-const gc = require("../search/importDictionary");
+// const gc = require("../search/importDictionary");
 const config = require("../config/config.json");
 const { Collection } = require("discord.js");
 const PenyimSpreadsheet = require("../penyim/PenyimSpreadsheet");
+const { listeners } = require("./listeners");
+const { DatabaseTable } = require("../../database/db");
 // const gc = require("../search/importDictionary");
 
 class StateManager extends EventEmitter {
@@ -18,19 +18,16 @@ class StateManager extends EventEmitter {
     this.guildPrefixCache = new Map();
     this.userFavRomanCache = new Map();
     this.penyimSheet = new PenyimSpreadsheet();
+    this.db = {
+      users: new DatabaseTable("users"),
+      guilds: new DatabaseTable('guilds')
+    }
   }
 
-  async initialize() {
-    try {
-      this.db = await open({
-        filename: 'database/database.db',
-        driver: sqlite3.Database
-      }),
-      this.gc = await gc;
-      await this.penyimSheet.initialize();
-    } catch (error) {
-      console.log(error);
-    }
+  register_events() {
+    listeners.forEach((listener) => {
+      listener()
+    })
   }
 }
 
@@ -41,4 +38,6 @@ class StateManager extends EventEmitter {
 //   return state;
 // }
 
-module.exports = new StateManager();
+module.exports = {
+  StateManager
+}

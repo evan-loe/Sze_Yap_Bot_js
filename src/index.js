@@ -1,14 +1,19 @@
 const fs = require("fs");
 const path = require("path");
 const { Intents, Client } = require("discord.js");
-const StateManager = require("./utils/StateManager");
+const { StateManager } = require("./utils/StateManager");
 const dotenv = require("dotenv").config({ path: __dirname + "/.env" });
+const { start_backend } = require('../dictionary/DictionaryBackend')
 
 if (dotenv.error) {
   console.log(dotenv);
 }
 
-client = new Client({
+// init dictionary server backend
+const dictionary = start_backend()
+const statemanager = new StateManager()
+
+const client = new Client({
   intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.DIRECT_MESSAGES, Intents.FLAGS.GUILD_MEMBERS],
 });
 
@@ -23,7 +28,7 @@ for (const file of commandFiles) {
   const command = require(`./commands/${file}`);
   // set key to name of command and value as exported module of file
   commands.push(command.data.toJSON());
-  StateManager.commands.set(command.data.name, command);
+  statemanager.commands.set(command.data.name, command);
 }
 
 const eventFiles = fs
@@ -86,6 +91,7 @@ const cleanTempFiles = () => {
 }
 
 const cron = require("node-cron");
+const { start } = require("repl");
 // scheduled server count at 5 am every morning
 cron.schedule("0 5 * * *", countServerMembers);
 cron.schedule("0 4 * * *", cleanTempFiles);
@@ -94,4 +100,4 @@ process.on('uncaughtException', function(err) {
   console.log('Whoops exception: ' + err);
 });
 
-module.exports = client;
+module.exports = statemanager;

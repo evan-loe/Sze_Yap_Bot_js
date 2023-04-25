@@ -1,0 +1,6 @@
+{
+  "columns": ["guild_owner_id", "cmd_prefix", "welcome_message"],
+  "data": {
+    "4567890233": ["139965429234", "+", "Hi!! Welcome to the server!"]
+  }
+}
