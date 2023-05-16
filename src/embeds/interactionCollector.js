@@ -91,9 +91,8 @@ module.exports.switchDict = async ({ buttonIds, sentMsg, paginate, searchQuery }
     sentMsg.components[1].components[0].setLabel(
       `Switch to ${paginate.selDictType == "SL" ? "Gene Chin" : "Stephen Li"}'s dictionary`
     );
-    sentMsg.components[0].components = (
-      paginate.selDictType === "SL" ? paginate.slFound : paginate.gcFound
-    )
+    sentMsg.components[0].components =
+      paginate.selDictType === "SL" && paginate.slFound
       ? [buttons.prev, buttons.next, buttons.up, buttons.down, buttons.mic]
       : [buttons.mic];
 
@@ -126,6 +125,7 @@ module.exports.defaultRomanization = ({ menuId, sentMsg }) => {
       sentMsg.components.pop();
     } catch (err) {
       console.log(err);
+      debugger
     }
 
     sentMsg.edit({ components: sentMsg.components }).catch((err) => {
@@ -145,6 +145,7 @@ module.exports.switchPenyim = ({ buttonIds, sentMsg, paginate, searchQuery }) =>
   const collector = sentMsg.createMessageComponentCollector({
     componentType: "BUTTON",
     filter: (interaction) => {
+      console.log(interaction)
       return buttonIds.includes(String(interaction.customId));
     },
     time: 1800 * 1000,
@@ -216,3 +217,19 @@ module.exports.penyimConvertCommand = ({ buttonIds, sentMsg, penyimArray }) => {
     });
   });
 };
+
+
+// module.exports.switchPenyim = ({
+//   buttonIds,
+//   sentMsg,
+// }) => {
+//   const collector = sentMsg.createMessageComponentCollector({
+//     componentType: "BUTTON",
+//     filter: (interaction) => {
+//       return buttonIds.includes(String(interaction.customId));
+//     },
+//     time: 1800 * 1000,
+//   });
+
+//   collector.on("collect", (i) => {});
+// };

@@ -12,12 +12,12 @@ class PenyimSpreadsheet {
   async initialize() {
     const workbook = new ExcelJS.Workbook();
     await workbook.xlsx.readFile(
-      __dirname + "/../assets/Initial_and_Finals_chart_for_Penyim_Converter.xlsx"
+      __dirname + "/../assets/Initial_and_Finals_Chart_for_Penyim_Converter.xlsx"
     );
     workbook.eachSheet((worksheet) => {
       worksheet.spliceColumns(21, 20); // remove tone info
       const prefixes = worksheet.getRow(1).values;
-      const suffixes = worksheet.getColumn(1).values;
+      const suffixes = worksheet.getColumn(1).values; 
       prefixes.splice(0, 3);
       suffixes.splice(0, 2);
 

@@ -10,7 +10,7 @@ module.exports = {
     .addStringOption((option) => {
       return option
         .setName("romanization")
-        .setDescription("dsfds")
+        .setDescription("Changes the romanization")
         .setRequired(true)
         .addChoice(`${codeRomanMap["HSR"]}`, "HSR")
         .addChoice(`${codeRomanMap["SL"]}`, "SL")

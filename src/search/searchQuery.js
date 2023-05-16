@@ -1,5 +1,4 @@
 const StateManager = require("../utils/StateManager");
-const danfo = require("danfojs-node");
 const config = require("../config/config.json");
 const DictEmbed = require("../embeds/DictEmbed");
 const { MessageEmbed } = require("discord.js");
@@ -103,7 +102,7 @@ class searchQuery {
       case "CHINESE":
         if (this.found[0].length < 2) {
           result = dict.filter((entry, index) => {
-            this.parsedResult.slIndices.push(index);
+            this.parsedResult.sl.push(index);
             return entry.cantonese.match(this.found[0]) || entry.mandarin.match(this.found[0]);
           });
         }
@@ -283,12 +282,12 @@ class searchQuery {
           // simplified search, then traditional
           const simplified = dict.iloc({ rows: dict["繁"].str.includes(this.found[0]) });
           const traditional = dict.iloc({ rows: dict["简"].str.includes(this.found[0]) });
-          danfo
-            .concat({ df_list: [simplified, traditional], axis: 0 })
-            .to_json()
-            .forEach((row) => {
-              this.pushSingle(row);
-            });
+          // danfo
+          //   .concat({ df_list: [simplified, traditional], axis: 0 })
+          //   .to_json()
+          //   .forEach((row) => {
+          //     this.pushSingle(row);
+          //   });
           return this;
         } else {
           dict

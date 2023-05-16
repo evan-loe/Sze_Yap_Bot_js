@@ -22,7 +22,7 @@ module.exports = {
   next: new MessageButton().setCustomId("next").setLabel("Next").setStyle("SUCCESS"),
   up: new MessageButton().setCustomId("up").setLabel("Up").setStyle("PRIMARY"),
   down: new MessageButton().setCustomId("down").setLabel("Down").setStyle("PRIMARY"),
-  mic: new MessageButton().setCustomId("mic").setLabel("Mic").setStyle("SECONDARY"),
+  mic: new MessageButton().setCustomId("mic").setLabel("Mic").setStyle("SECONDARY").setDisabled(true),
   hsr: (currStyle) =>
     new MessageButton()
       .setCustomId("HSR")

@@ -1,30 +1,26 @@
 const { EventEmitter } = require("events");
 
-const connection = require("../../database/db");
-const gc = require("../search/importDictionary");
+// const connection = require("../../database/db");
+// const gc = require("../search/importDictionary");
 const config = require("../config/config.json");
 const { Collection } = require("discord.js");
 const PenyimSpreadsheet = require("../penyim/PenyimSpreadsheet");
+const { DatabaseTable } = require("../../database/db");
 // const gc = require("../search/importDictionary");
 
 class StateManager extends EventEmitter {
-  constructor(options) {
+  constructor(dictionary, options) {
     super(options);
-    this.sl = require(`../assets/${config.useFeedback ? config.sl_feedbackFile : config.sl_file}`);
-    this.gc = null;
+    // this.sl = require(`../assets/${config.useFeedback ? config.sl_feedbackFile : config.sl_file}`);
+    // this.gc = null;
+    this.dictionary = dictionary
     this.commands = new Collection();
     this.guildPrefixCache = new Map();
     this.userFavRomanCache = new Map();
     this.penyimSheet = new PenyimSpreadsheet();
-  }
-
-  async initialize() {
-    try {
-      this.connection = await connection;
-      this.gc = await gc;
-      await this.penyimSheet.initialize();
-    } catch (error) {
-      console.log(error);
+    this.db = {
+      users: new DatabaseTable("users"),
+      guilds: new DatabaseTable('guilds')
     }
   }
 }
@@ -36,4 +32,4 @@ class StateManager extends EventEmitter {
 //   return state;
 // }
 
-module.exports = new StateManager();
+module.exports = new StateManager()

@@ -25,19 +25,26 @@ module.exports = {
       return;
     }
     if (!StateManager.userFavRomanCache.has(String(interaction.user.id))) {
-      await StateManager.connection
-        .query(`SELECT favRomanType FROM Users WHERE userId = '${interaction.user.id}'`)
-        .then(async (result) => {
-          if (!Array.isArray(result[0]) || !result[0].length) {
-            console.log("User not found, creating entry in db...");
-            await StateManager.connection.query(
-              `INSERT INTO Users VALUES('${interaction.user.id}', NULL)`
-            );
-            StateManager.userFavRomanCache.set(interaction.user.id, null);
-          } else {
-            StateManager.userFavRomanCache.set(interaction.user.id, result[0][0].favRomanType);
-          }
-        });
+      try {
+        const result = await StateManager.db.get(
+          `SELECT favRomanType FROM Users WHERE userId = $userId`, {
+            $userId: interaction.user.id,});
+        if (result["favRomanType"]) {
+          console.log("Setting cache");
+          console.log(row);
+          console.log(row["favRomanType"]);
+          StateManager.userFavRomanCache.set(String(interaction.user.id), row["favRomanType"]);
+        } else {
+          console.log("Didn't find user record, creating one now...");
+          await StateManager.db.run(`INSERT INTO Users VALUES($userId, NULL)`, {
+            $userId: interaction.user.id,
+          });
+          StateManager.userFavRomanCache.set(interaction.user.id, null);
+        }
+      } catch (err) {
+        console.log(err)
+      }
+        
       // connect to db, create new user, and update cache
     }
 
@@ -66,12 +73,13 @@ module.exports = {
           buttons.dj(q.userFavType),
           buttons.jw(q.userFavType),
         ]),
-        ...(userFav === null
-          ? [new MessageActionRow().addComponents([buttons.favRomanDropdown])]
-          : []),
+        ...(userFav
+          ? []
+          : [new MessageActionRow().addComponents([buttons.favRomanDropdown])]),
       ],
       fetchReply: true,
     });
+    console.log("User Fav ", userFav)
 
     interactionCollector.navigationButton({
       buttonIds: ["next", "prev", "up", "down"],
@@ -104,6 +112,10 @@ module.exports = {
       paginate: paginate,
       searchQuery: q,
     });
+
+    // interactionCollector.mic({
+    //   sentMsg: sentMsg,
+    // })
   },
   parse(commandString) {
     return [commandString.trim()];

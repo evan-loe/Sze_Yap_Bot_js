@@ -2,13 +2,14 @@
   "dependencies": {
     "@discordjs/builders": "^0.9.0",
     "@discordjs/rest": "^0.2.0-canary.0",
-    "danfojs-node": "^0.3.4",
+    "csv-writer": "^1.6.0",
     "discord-api-types": "^0.25.2",
     "discord.js": "^13.3.1",
     "dotenv": "^10.0.0",
     "exceljs": "^4.3.0",
     "loadash": "^1.0.0",
-    "mysql2": "^2.3.3"
+    "node-cron": "^3.0.0",
+    "node-fetch": "^2.6.9"
   },
   "name": "sze-yap-bot",
   "version": "1.0.0",
@@ -23,7 +24,6 @@
   "license": "ISC",
   "type": "commonjs",
   "devDependencies": {
-    "csv-parser": "^3.0.0",
     "json2csv": "^5.0.6"
   }
 }

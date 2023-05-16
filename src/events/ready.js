@@ -31,23 +31,22 @@ module.exports = {
           console.log("Successfully registered commands locally.");
         }
 
-        await StateManager.initialize();
-        require("./addListeners");
-        client.guilds.cache.forEach(async (guild) => {
-          await StateManager.connection
-            .query(`SELECT cmdPrefix FROM Guilds WHERE guildId = '${guild.id}'`)
-            .then(async (result) => {
-              if (!Array.isArray(result[0]) || !result[0].length) {
-                console.log("Guild not found, creating entry in db...");
-                await StateManager.connection.query(
-                  `INSERT INTO Guilds VALUES('${guild.id}', '${guild.ownerId}', '+', '0')`
-                );
-                StateManager.guildPrefixCache.set(guild.id, "+");
-              } else {
-                StateManager.guildPrefixCache.set(guild.id, result[0][0].cmdPrefix);
-              }
-              console.log(StateManager.guildPrefixCache);
-            });
+        client.guilds.cache.forEach((guild) => {
+          const query = StateManager.db.guilds.select_n(1, {
+            where: "id",
+            condition: "equals",
+            satisfies: guild.id
+          })
+
+          if (!query) {
+            StateManager.db.guilds.insert(guild.id, {
+              guild_owner_id: guild.ownerId,
+            })
+            StateManager.guildPrefixCache.set(guild.id, "+");
+          } else {
+            StateManager.guildPrefixCache.set(guild.id, query["cmd_prefix"])
+          }
+
         });
       } catch (error) {
         if (error) console.error(error);

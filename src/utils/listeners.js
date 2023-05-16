@@ -1,9 +1,9 @@
-const StateManager = require("../utils/StateManager");
+const StateManager = require('./StateManager')
 
 StateManager.on("prefixUpdate", (guildId, prefix) => {
-  StateManager.guildPrefixCache.set(guildId, prefix);
+  StateManager.guildPrefixCache.set(guildId, prefix)
   console.log("Updated cache", StateManager.guildPrefixCache);
-});
+})
 
 StateManager.on("guildJoin", (guildId, prefix) => {
   StateManager.guildPrefixCache.set(guildId, prefix);
@@ -16,9 +16,17 @@ StateManager.on("guildLeave", (guildId) => {
 });
 
 StateManager.on("romanizationUpdated", async (userId, favRomanType) => {
-  await StateManager.connection.query(
-    `INSERT INTO Users VALUES('${userId}', '${favRomanType}') ON DUPLICATE KEY UPDATE favRomanType = '${favRomanType}'`
-  );
+  StateManager.db.users.insert(userId, favRomanType)
   StateManager.userFavRomanCache.set(userId, favRomanType);
   console.log("Updated Cache", StateManager.userFavRomanCache);
 });
+
+module.exports = {
+  listeners: [
+    prefix_update,
+    guild_join,
+    guild_leave,
+    romanization_updated
+  ]
+}
+
